@@ -660,15 +660,26 @@ public final class SQLDatabaseManager implements DatabaseManager {
                     statement.close();
 
                     if (!playerName.isEmpty() && !profile.getPlayerName().isEmpty()) {
-                        statement = connection.prepareStatement(
-                                "UPDATE `" + tablePrefix + "users` "
-                                        + "SET user = ?, uuid = ? "
-                                        + "WHERE id = ?");
-                        statement.setString(1, playerName);
-                        statement.setString(2, uuid.toString());
-                        statement.setInt(3, id);
-                        statement.executeUpdate();
-                        statement.close();
+                        if(uuid == null && profile.getUniqueId() == null) {
+                            statement = connection.prepareStatement(
+                                    "UPDATE `" + tablePrefix + "users` "
+                                            + "SET user = ?"
+                                            + "WHERE id = ?");
+                            statement.setString(1, playerName);
+                            statement.setInt(2, id);
+                            statement.executeUpdate();
+                            statement.close();
+                        } else {
+                            statement = connection.prepareStatement(
+                                    "UPDATE `" + tablePrefix + "users` "
+                                            + "SET user = ?, uuid = ? "
+                                            + "WHERE id = ?");
+                            statement.setString(1, playerName);
+                            statement.setString(2, uuid.toString());
+                            statement.setInt(3, id);
+                            statement.executeUpdate();
+                            statement.close();
+                        }
                     }
 
                     return profile;
